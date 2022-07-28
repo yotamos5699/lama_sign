@@ -126,54 +126,57 @@ export default function App() {
   }, []);
 
   const loadPdfs = async (urls) => {
-    Promise.all(urls.map((doc) => doc.DocUrl))
+    return Promise.all(urls)
       .then((res) => {
-        setFiles(res);
-        console.log(res);
+        console.log("****** res in promise ******", res);
+        return res;
       })
       .catch((err) => console.group(err));
   };
+
   const handleDropDownInput = (event) => {
     dropValRef.current = event;
-    console.log("ebent", event);
+    console.log("****** event in handleDropDownInput ******", event);
     console.log("dropValue  ", dropValRef);
 
     let asignUrls = [];
-
     docsObject.forEach((doc, index) => {
       dropValRef.current.forEach((value) => {
         if (doc.AccountKey == value.value) {
-          asignUrls.push(files[index]);
+          asignUrls.push(doc.DocUrl);
         }
       });
       console.log(asignUrls);
       urlsToRender.current = asignUrls;
     });
   };
+
   function toggleModal(e) {
     e.preventDefault();
     setIsOpen(!isOpen);
   }
-  const setDataToFile = () => {
-    console.log("clicked");
 
-    setIsMounted(true);
-    console.log(isMounted);
-    console.log(files);
-  };
   const handleAuthButton = (event) => {
-    loadPdfs(urlsToRender)
-      .then((res) => setFiles(res))
+    console.log("****** urlsToRender ******", urlsToRender);
+    loadPdfs(urlsToRender.current)
+      .then((res) => setTimeout(setFiles(res), 5000))
       .then(setIsSelected(true))
       .catch((err) => console.log(err));
   };
 
   const passPdfToSign = (e, fi) => {
-    console.log("ahhahaahahahah");
+    console.log("****** selected PDF to signing ******");
     setCurrentFile(fi);
   };
   const packageURL = "https://unpkg.com/pdfjs-dist@2.5.207/build/pdf.worker.js";
 
+  const resetRequest = () => {
+    setIsMounted(false);
+    setIsSelected(false);
+    setIsOpen(!isOpen);
+    urlsToRender.current = undefined;
+    dropValRef.current = undefined;
+  };
   return (
     <div className="app">
       <Auth
@@ -181,9 +184,11 @@ export default function App() {
         handleAuthButton={handleAuthButton}
         sortedCastumers={sortedCastumers}
       />
-      <button onClick={setDataToFile}>!!!!!!!! למה </button>
+      <button className="api-button" onClick={() => setIsMounted(true)}>
+        כפתור{" "}
+      </button>
       <Worker workerUrl={packageURL}>
-        {isSelected && isMounted ? (
+        {isMounted && isSelected ? (
           files.map((fi) => {
             return (
               <div>
@@ -201,7 +206,7 @@ export default function App() {
             );
           })
         ) : (
-          <h1> pdf view</h1>
+          <h1> סתם מידע </h1>
         )}
       </Worker>
       <br />
@@ -215,13 +220,14 @@ export default function App() {
         closeTimeoutMS={500}
       >
         <Sign
-          demo={isSelected && isMounted && courentFile && courentFile}
+          demo={isMounted && isSelected && courentFile && courentFile}
           setResult={setResult}
+          resetRequest={resetRequest}
         />
       </Modal>
       <br />
       <br />
-      :({!isMounted && <h1>!!!!! loading !!!! </h1>})
+      :({!isSelected && isMounted && <h1>!!!!! loading !!!! </h1>})
     </div>
   );
 }

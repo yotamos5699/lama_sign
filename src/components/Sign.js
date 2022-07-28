@@ -3,7 +3,7 @@ import SignatureCanvas from "react-signature-canvas";
 import modifyPdf, { download } from "./modifyPDF";
 //import demo from "../assets/bb.pdf";
 
-const Sign = ({ demo, result, setResult, isOpen, toggleModal }) => {
+const Sign = (props) => {
   let sigPad = {};
 
   const clear = (e) => {
@@ -13,7 +13,7 @@ const Sign = ({ demo, result, setResult, isOpen, toggleModal }) => {
   const trim = (e) => {
     e.preventDefault();
     const url = sigPad.getTrimmedCanvas().toDataURL("image/png");
-    modifyPdf(demo, url)
+    modifyPdf(props.demo, url)
       .then((res) => download(res))
       .catch((err) => console.log(err));
   };
@@ -29,6 +29,16 @@ const Sign = ({ demo, result, setResult, isOpen, toggleModal }) => {
       />
       <br />
       <button
+        className="save-button"
+        onClick={(e) => {
+          clear(e);
+          props.resetRequest(e);
+        }}
+      >
+        חזרה לתפריט
+      </button>
+      <button
+        className="save-button"
         onClick={(e) => {
           clear(e);
         }}
@@ -36,8 +46,10 @@ const Sign = ({ demo, result, setResult, isOpen, toggleModal }) => {
         נקה
       </button>
       <button
+        className="clean-button"
         onClick={(e) => {
           trim(e);
+          props.resetRequest(e);
         }}
       >
         שמור
