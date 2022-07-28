@@ -5,11 +5,7 @@ import Sign from "./components/Sign";
 import demo from "./assets/bb.pdf";
 import Modal from "react-modal";
 import axios from "axios";
-import {
-  decodeFromBase64,
-  decodeFromBase64DataUri,
-  decodePDFRawStream,
-} from "pdf-lib";
+
 
 import "./styles.css";
 import { createObjectURL } from "pdfjs-dist";
