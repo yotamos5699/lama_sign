@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { CharacterMap, Viewer } from "@react-pdf-viewer/core";
+import React from "react";
+import { Viewer } from "@react-pdf-viewer/core";
 import { defaultLayoutPlugin } from "@react-pdf-viewer/default-layout";
 
 import "@react-pdf-viewer/core/lib/styles/index.css";
