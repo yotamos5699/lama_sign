@@ -2,107 +2,12 @@ import React, { useRef, useState, useEffect } from "react";
 import PdfView from "./components/PdfView";
 import { Worker } from "@react-pdf-viewer/core";
 import Sign from "./components/Sign";
-import aa from "./assets/aa.PDF";
-import bb from "./assets/bb.pdf";
-import cc from "./assets/cc.PDF";
-import dd from "./assets/dd.pdf";
-import ee from "./assets/ee.pdf";
-import ff from "./assets/ff.PDF";
-import gg from "./assets/gg.pdf";
-import hh from "./assets/hh.PDF";
-import ii from "./assets/ii.PDF";
-import jj from "./assets/jj.pdf";
 import Modal from "react-modal";
-
 import "./styles.css";
 import Auth from "./components/Auth";
+import { signersList,castumersList, pdfs } from "./stylesNmock";
 //import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 Modal.setAppElement("#root");
-let pdfs = [
-  {
-    isSIgned: false,
-    DocNumber: 3276,
-    AccountKey: "6107",
-    DocumentDetails: "0505455699",
-    DocUrl: aa,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 4530,
-    AccountKey: "6900",
-    DocumentDetails: "05066558764",
-    DocUrl: bb,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 2312,
-    AccountKey: "6207",
-    DocumentDetails: "0506612313",
-    DocUrl: cc,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 3320,
-    AccountKey: "6707",
-    DocumentDetails: "0506655632",
-    DocUrl: dd,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 3530,
-    AccountKey: "6531",
-    Phone: "0501231231",
-    DocUrl: ee,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 3230,
-    AccountKey: "6051",
-    Phone: "0506655698",
-    DocUrl: ff,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 4230,
-    AccountKey: "6031",
-    Phone: "0509980680",
-    DocUrl: gg,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 3230,
-    AccountKey: "6031",
-    Phone: "0509980680",
-    DocUrl: hh,
-  },
-  {
-    isSIgned: false,
-    DocNumber: 3254,
-    AccountKey: "6107",
-
-    Phone: "0506655699",
-    DocUrl: ii,
-  },
-
-  {
-    isSIgned: false,
-    DocNumber: 3342,
-    AccountKey: "6107",
-    Phone: "0506655699",
-    DocUrl: jj,
-  },
-];
-
-let castumersList = [
-  { value: "6107", label: "רמי" },
-  { value: "6900", label: "איציק" },
-  { value: "6031", label: "משה" },
-  { value: "6051", label: "טל" },
-  { value: "6531", label: "רמי" },
-  { value: "6707", label: "דותן לוי" },
-  { value: "6051", label: "סמי הכבאי" },
-  { value: "6207", label: "ילד הומו" },
-];
 
 export default function App() {
   const [result, setResult] = useState(null);
@@ -113,7 +18,7 @@ export default function App() {
   const [sortedCastumers, setSortedCastumers] = useState();
   const [isSelected, setIsSelected] = useState(false);
   const [docsObject, setDocsObject] = useState();
-
+  const [signersList, setSignersList] = useState();
   const urlsToRender = useRef();
   const dropValRef = useRef();
 
@@ -121,6 +26,7 @@ export default function App() {
     const setData = async () => {
       setSortedCastumers(castumersList);
       setDocsObject(pdfs);
+      setSignersList(signersList.map(signer=> signer.signerData))
     };
     setData();
   }, []);
@@ -135,12 +41,13 @@ export default function App() {
   };
 
   const handleDropDownInput = (event) => {
+    console.log("****** Event *******"event)
     dropValRef.current = event;
     console.log("****** event in handleDropDownInput ******", event);
     console.log("dropValue  ", dropValRef);
 
     let asignUrls = [];
-    docsObject.forEach((doc, index) => {
+    docsObject.forEach((doc) => {
       dropValRef.current.forEach((value) => {
         if (doc.AccountKey == value.value) {
           asignUrls.push(doc.DocUrl);
@@ -155,7 +62,13 @@ export default function App() {
     e.preventDefault();
     setIsOpen(!isOpen);
   }
+  const setDataToFile = () => {
+    console.log("****** clicked setDataToFile ******");
 
+    setIsMounted(true);
+    console.log(isMounted);
+    console.log(files);
+  };
   const handleAuthButton = (event) => {
     console.log("****** urlsToRender ******", urlsToRender);
     loadPdfs(urlsToRender.current)
@@ -170,22 +83,16 @@ export default function App() {
   };
   const packageURL = "https://unpkg.com/pdfjs-dist@2.5.207/build/pdf.worker.js";
 
-  const resetRequest = () => {
-    setIsMounted(false);
-    setIsSelected(false);
-    setIsOpen(!isOpen);
-    urlsToRender.current = undefined;
-    dropValRef.current = undefined;
-  };
   return (
     <div className="app">
       <Auth
         handleDropDownInput={handleDropDownInput}
         handleAuthButton={handleAuthButton}
         sortedCastumers={sortedCastumers}
+        signersList={signersList}
       />
-      <button className="api-button" onClick={() => setIsMounted(true)}>
-        כפתור{" "}
+      <button className="api-button" onClick={setDataToFile}>
+        כפתור שמושך מידע מ API{" "}
       </button>
       <Worker workerUrl={packageURL}>
         {isMounted && isSelected ? (
@@ -222,7 +129,6 @@ export default function App() {
         <Sign
           demo={isMounted && isSelected && courentFile && courentFile}
           setResult={setResult}
-          resetRequest={resetRequest}
         />
       </Modal>
       <br />
