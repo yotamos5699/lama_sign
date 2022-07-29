@@ -10,19 +10,3 @@ ReactDOM.render(
   </React.StrictMode>,
   rootElement
 );
-{/* <Router>
-<nav className="nav-bar">
-  <div>
-    <Link className="aa" to={"/"}>
-      הזמנה
-    </Link>
-    <Link className="bb" to={"/charts"}>
-      מידע
-    </Link>
-  </div>
-</nav>
-<Routes>
-  <Route path={"/"} element={<App />} />
-  <Route path={"/charts"} element={<Page />} />
-</Routes>
-</Router> */}
